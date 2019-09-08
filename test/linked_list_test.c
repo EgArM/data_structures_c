@@ -9,12 +9,14 @@ void test_create_linked_list() {
   assert(ll != NULL);
   assert(ll->head == NULL);
   assert(ll->tail == NULL);
+  free_linked_list(ll);
 }
 
 void test_create_linked_list_node() {
   int8_t value = 100;
   struct LinkedListNode *node = create_linked_list_node(&value);
   assert(node->value == &value);
+  free_linked_list_node(node);
 }
 
 void test_free_linked_list_node() {
@@ -59,6 +61,8 @@ void test_linked_list_add_tail_node() {
   assert(ll->tail->prev == node2);
   assert(ll->tail == node3);
   assert(ll->tail->next == NULL);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_add_head_node() {
@@ -97,6 +101,8 @@ void test_linked_list_add_head_node() {
   assert(ll->tail->prev == node2);
   assert(ll->tail == node1);
   assert(ll->tail->next == NULL);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_remove_tail_node() {
@@ -117,6 +123,8 @@ void test_linked_list_remove_tail_node() {
   assert(linked_list_remove_tail_node(ll) == node3);
   assert(linked_list_remove_tail_node(ll) == node2);
   assert(linked_list_remove_tail_node(ll) == node1);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_remove_head_node() {
@@ -137,6 +145,8 @@ void test_linked_list_remove_head_node() {
   assert(linked_list_remove_head_node(ll) == node1);
   assert(linked_list_remove_head_node(ll) == node2);
   assert(linked_list_remove_head_node(ll) == node3);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_add_tail_general(void (*tail_adder)(struct LinkedList *, int8_t *)) {
@@ -172,6 +182,8 @@ void test_linked_list_add_tail_general(void (*tail_adder)(struct LinkedList *, i
   assert(ll->head->next->value == &value2);
   assert(ll->tail->value == &value3);
   assert(ll->tail->next == NULL);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_add_tail() {
@@ -215,6 +227,8 @@ void test_linked_list_add_head_general(void (*head_adder)(struct LinkedList *, i
   assert(ll->head->next->value == &value2);
   assert(ll->tail->value == &value1);
   assert(ll->tail->next == NULL);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_add_head() {
@@ -239,6 +253,8 @@ void test_linked_list_remove_tail() {
   assert(linked_list_remove_tail(ll) == &value1);
   assert(linked_list_remove_tail(ll) == &value2);
   assert(linked_list_remove_tail(ll) == &value3);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_remove_head_general(int8_t *(*head_remover)(struct LinkedList *)) {
@@ -255,6 +271,8 @@ void test_linked_list_remove_head_general(int8_t *(*head_remover)(struct LinkedL
   assert(head_remover(ll) == &value1);
   assert(head_remover(ll) == &value2);
   assert(head_remover(ll) == &value3);
+
+  free_linked_list(ll);
 }
 
 void test_linked_list_remove_head() {
@@ -283,6 +301,8 @@ void test_clean_linked_list() {
   clean_linked_list(ll);
   assert(ll->head == NULL);
   assert(ll->tail == NULL);
+
+  free_linked_list(ll);
 }
 
 int main(int argc, char const *argv[]) {

@@ -1,6 +1,5 @@
 #include <linked_list.h>
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 struct LinkedList *create_linked_list() {
   struct LinkedList *list = malloc(sizeof(struct LinkedList));
@@ -15,6 +14,8 @@ struct LinkedListNode *create_linked_list_node(void *value) {
   struct LinkedListNode *node = malloc(sizeof(struct LinkedListNode));
   if (node != NULL) {
     node->value = value;
+    node->next = NULL;
+    node->prev = NULL;
   }
   return node;
 }
