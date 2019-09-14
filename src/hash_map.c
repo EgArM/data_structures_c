@@ -22,18 +22,10 @@ struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
   map->hash_f = hash_f;
   map->eq_f = eq_f;
   map_size_t buckets_number = 16;
-  while (buckets_number * 0.75 < initial_capacity) {
-    buckets_number *= 2;
+  while (buckets_number * LOAD_FACTOR < initial_capacity) {
+    buckets_number <<= 1;
   }
   map->capacity = buckets_number * LOAD_FACTOR;
-  if (map->capacity < initial_capacity) {
-    printf("hash_map.c:19. create_hash_map. failed to determine number of buckets\n");
-    printf("initial_capacity: %lu\n", initial_capacity);
-    printf("LOAD_FACTOR: %.10f\n", LOAD_FACTOR);
-    printf("buckets_number: %lu\n", buckets_number);
-    printf("capacity: %lu\n", map->capacity);
-    exit(-1);
-  }
   map->buckets = malloc(buckets_number * sizeof(struct HashMapNode));
   if (map->buckets == NULL) {
     free(map);
