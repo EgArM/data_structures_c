@@ -7,7 +7,6 @@
 
 #define LOAD_FACTOR 0.75f
 #define MINIMUM_CAPACITY 12
-#define GROW_FACTOR 2
 
 struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
                                 bool (*eq_f) (void *, void *),
@@ -24,6 +23,10 @@ struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
   map_size_t buckets_number = 16;
   while (buckets_number * LOAD_FACTOR < initial_capacity) {
     buckets_number <<= 1;
+    if (buckets_number == 0) {
+      free(map);
+      return NULL;
+    }
   }
   map->capacity = buckets_number * LOAD_FACTOR;
   map->buckets = malloc(buckets_number * sizeof(struct HashMapNode));
@@ -49,10 +52,10 @@ void __hash_map_put_node__(struct HashMap *map, struct HashMapNode *node) {
   map->entries_number += 1;
 }
 
-void __hash_map_resize__(struct HashMap *map) {
+map_size_t __hash_map_resize__(struct HashMap *map) {
   struct HashMapBucket *current_buckets = map->buckets;
   map_size_t current_buckets_number = map->buckets_number;
-  map_size_t new_buckets_number = GROW_FACTOR * current_buckets_number;
+  map_size_t new_buckets_number = current_buckets_number << 1;
   map_size_t new_capacity = new_buckets_number * LOAD_FACTOR;
 
   map->buckets = malloc(new_buckets_number * sizeof(struct HashMapNode));
