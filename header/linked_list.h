@@ -25,13 +25,13 @@ struct LinkedListNode *linked_list_remove_tail_node(struct LinkedList *list);
 
 struct LinkedListNode *linked_list_remove_head_node(struct LinkedList *list);
 
-void linked_list_add_tail(struct LinkedList *list, void *value);
+struct LinkedListNode *linked_list_add_tail(struct LinkedList *list, void *value);
 
-void linked_list_offer(struct LinkedList *list, void *value);
+struct LinkedListNode *linked_list_offer(struct LinkedList *list, void *value);
 
-void linked_list_add_head(struct LinkedList *list, void *value);
+struct LinkedListNode *linked_list_add_head(struct LinkedList *list, void *value);
 
-void linked_list_push(struct LinkedList *list, void *value);
+struct LinkedListNode *linked_list_push(struct LinkedList *list, void *value);
 
 void *linked_list_remove_tail(struct LinkedList *list);
 

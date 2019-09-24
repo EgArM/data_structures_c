@@ -83,22 +83,28 @@ struct LinkedListNode *linked_list_remove_head_node(struct LinkedList *list) {
   return result;
 }
 
-void linked_list_add_tail(struct LinkedList *list, void *value) {
+struct LinkedListNode *linked_list_add_tail(struct LinkedList *list, void *value) {
   struct LinkedListNode *node = create_linked_list_node(value);
-  linked_list_add_tail_node(list, node);
+  if (node != NULL) {
+    linked_list_add_tail_node(list, node);
+  }
+  return node;
 }
 
-void linked_list_offer(struct LinkedList *list, void *value) {
-  linked_list_add_tail(list, value);
+struct LinkedListNode *linked_list_offer(struct LinkedList *list, void *value) {
+  return linked_list_add_tail(list, value);
 }
 
-void linked_list_add_head(struct LinkedList *list, void *value) {
+struct LinkedListNode *linked_list_add_head(struct LinkedList *list, void *value) {
   struct LinkedListNode *node = create_linked_list_node(value);
-  linked_list_add_head_node(list, node);
+  if (node != NULL) {
+    linked_list_add_head_node(list, node);
+  }
+  return node;
 }
 
-void linked_list_push(struct LinkedList *list, void *value) {
-  linked_list_add_head(list, value);
+struct LinkedListNode *linked_list_push(struct LinkedList *list, void *value) {
+  return linked_list_add_head(list, value);
 }
 
 void *linked_list_remove_tail(struct LinkedList *list) {

@@ -149,14 +149,14 @@ void test_linked_list_remove_head_node() {
   free_linked_list(ll);
 }
 
-void test_linked_list_add_tail_general(void (*tail_adder)(struct LinkedList *, int8_t *)) {
+void test_linked_list_add_tail_general(struct LinkedListNode *(*tail_adder)(struct LinkedList *, int8_t *)) {
   struct LinkedList *ll = create_linked_list();
 
   int8_t value1 = 1;
   int8_t value2 = 2;
   int8_t value3 = 3;
 
-  tail_adder(ll, &value1);
+  assert(tail_adder(ll, &value1)->value == &value1);
   assert(ll->head->prev == NULL);
   assert(ll->head->value == &value1);
   assert(ll->head->next == NULL);
@@ -165,7 +165,7 @@ void test_linked_list_add_tail_general(void (*tail_adder)(struct LinkedList *, i
   assert(ll->tail->next == NULL);
   assert(ll->head == ll->tail);
 
-  tail_adder(ll, &value2);
+  assert(tail_adder(ll, &value2)->value == &value2);
   assert(ll->head->prev == NULL);
   assert(ll->head->value == &value1);
   assert(ll->head->next == ll->tail);
@@ -173,7 +173,7 @@ void test_linked_list_add_tail_general(void (*tail_adder)(struct LinkedList *, i
   assert(ll->tail->value == &value2);
   assert(ll->tail->next == NULL);
 
-  tail_adder(ll, &value3);
+  assert(tail_adder(ll, &value3)->value == &value3);
   assert(ll->head->prev == NULL);
   assert(ll->head->value == &value1);
   assert(ll->head->next == ll->tail->prev);
@@ -187,21 +187,21 @@ void test_linked_list_add_tail_general(void (*tail_adder)(struct LinkedList *, i
 }
 
 void test_linked_list_add_tail() {
-  test_linked_list_add_tail_general((void (*)(struct LinkedList *, int8_t *)) linked_list_add_tail);
+  test_linked_list_add_tail_general((struct LinkedListNode *(*)(struct LinkedList *, int8_t *)) linked_list_add_tail);
 }
 
 void test_linked_list_offer() {
-  test_linked_list_add_tail_general((void (*)(struct LinkedList *, int8_t *)) linked_list_offer);
+  test_linked_list_add_tail_general((struct LinkedListNode *(*)(struct LinkedList *, int8_t *)) linked_list_offer);
 }
 
-void test_linked_list_add_head_general(void (*head_adder)(struct LinkedList *, int8_t *)) {
+void test_linked_list_add_head_general(struct LinkedListNode *(*head_adder)(struct LinkedList *, int8_t *)) {
   struct LinkedList *ll = create_linked_list();
 
   int8_t value1 = 1;
   int8_t value2 = 2;
   int8_t value3 = 3;
 
-  head_adder(ll, &value1);
+  assert(head_adder(ll, &value1)->value == &value1);
   assert(ll->head->prev == NULL);
   assert(ll->head->value == &value1);
   assert(ll->head->next == NULL);
@@ -210,7 +210,7 @@ void test_linked_list_add_head_general(void (*head_adder)(struct LinkedList *, i
   assert(ll->tail->next == NULL);
   assert(ll->head == ll->tail);
 
-  head_adder(ll, &value2);
+  assert(head_adder(ll, &value2)->value == &value2);
   assert(ll->head->prev == NULL);
   assert(ll->head->value == &value2);
   assert(ll->head->next == ll->tail);
@@ -218,7 +218,7 @@ void test_linked_list_add_head_general(void (*head_adder)(struct LinkedList *, i
   assert(ll->tail->value == &value1);
   assert(ll->tail->next == NULL);
 
-  head_adder(ll, &value3);
+  assert(head_adder(ll, &value3)->value == &value3);
   assert(ll->head->prev == NULL);
   assert(ll->head->value == &value3);
   assert(ll->head->next == ll->tail->prev);
@@ -232,11 +232,11 @@ void test_linked_list_add_head_general(void (*head_adder)(struct LinkedList *, i
 }
 
 void test_linked_list_add_head() {
-  test_linked_list_add_head_general((void (*)(struct LinkedList *, int8_t *)) linked_list_add_head);
+  test_linked_list_add_head_general((struct LinkedListNode *(*)(struct LinkedList *, int8_t *)) linked_list_add_head);
 }
 
 void test_linked_list_push() {
-  test_linked_list_add_head_general((void (*)(struct LinkedList *, int8_t *)) linked_list_push);
+  test_linked_list_add_head_general((struct LinkedListNode *(*)(struct LinkedList *, int8_t *)) linked_list_push);
 }
 
 void test_linked_list_remove_tail() {
