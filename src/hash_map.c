@@ -44,7 +44,7 @@ struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
 
 void __hash_map_put_node__(struct HashMap *map, struct HashMapNode *node) {
   void *key = node->key;
-  map_size_t index = map->hash_f(key) & map->buckets_number - 1;
+  map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
   struct HashMapBucket *bucket = map->buckets + index;
   struct HashMapNode *next_node = bucket->node;
   node->next = next_node;
@@ -52,13 +52,16 @@ void __hash_map_put_node__(struct HashMap *map, struct HashMapNode *node) {
   map->entries_number += 1;
 }
 
-map_size_t __hash_map_resize__(struct HashMap *map) {
+bool __hash_map_resize__(struct HashMap *map) {
   struct HashMapBucket *current_buckets = map->buckets;
   map_size_t current_buckets_number = map->buckets_number;
   map_size_t new_buckets_number = current_buckets_number << 1;
   map_size_t new_capacity = new_buckets_number * LOAD_FACTOR;
 
   map->buckets = malloc(new_buckets_number * sizeof(struct HashMapNode));
+  if (map->buckets == NULL) {
+    return false;
+  }
   for (size_t i = 0; i < new_buckets_number; i++) {
     (map->buckets + i)->node=NULL;
   }
@@ -77,10 +80,11 @@ map_size_t __hash_map_resize__(struct HashMap *map) {
   }
 
   free(current_buckets);
+  return true;
 }
 
 struct HashMapNode *__hash_map_get_node__(struct HashMap *map, void *key) {
-  map_size_t index = map->hash_f(key) & map->buckets_number - 1;
+  map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
   struct HashMapBucket *bucket = map->buckets + index;
   struct HashMapNode *node = bucket->node;
   while (node != NULL) {
@@ -92,26 +96,29 @@ struct HashMapNode *__hash_map_get_node__(struct HashMap *map, void *key) {
   return NULL;
 }
 
-void *hash_map_put(struct HashMap *map, void *key, void *value) {
-  void *result = NULL;
+bool hash_map_put(struct HashMap *map, void *key, void *value, void **prev) {
   struct HashMapNode *node = __hash_map_get_node__(map, key);
   if (node != NULL) {
-    result = node->value;
+    *prev = node->value;
     node->value = value;
-    return result;
+    return true;
   } else {
-    map_size_t index = map->hash_f(key) & map->buckets_number - 1;
+    *prev = NULL;
+    map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
     struct HashMapBucket *bucket = map->buckets + index;
     node = malloc(sizeof(struct HashMapNode));
+    if (node == NULL) {
+      return false;
+    }
     node->key = key;
     node->value = value;
     node->next = bucket->node;
     bucket->node = node;
     map->entries_number += 1;
     if (map->entries_number > map->capacity) {
-      __hash_map_resize__(map);
+      return __hash_map_resize__(map);
     }
-    return NULL;
+    return true;
   }
 }
 
@@ -126,7 +133,7 @@ void *hash_map_get(struct HashMap *map, void *key) {
 }
 
 void *hash_map_remove(struct HashMap *map, void *key) {
-  map_size_t index = map->hash_f(key) & map->buckets_number - 1;
+  map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
   struct HashMapBucket *bucket = map->buckets + index;
   struct HashMapNode *prev = NULL;
   struct HashMapNode *node = bucket->node;

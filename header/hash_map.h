@@ -27,7 +27,7 @@ struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
                                 bool (*eq_f) (void *, void *),
                                 map_size_t initial_capacity);
 
-void *hash_map_put(struct HashMap *map, void *key, void *value);
+bool hash_map_put(struct HashMap *map, void *key, void *value, void **prev);
 
 bool hash_map_contains(struct HashMap *map, void *key);
 

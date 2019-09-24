@@ -66,23 +66,27 @@ void test_hash_map_put() {
   int8_t value1 = 1;
   int8_t value101 = 101;
 
-  hash_map_put(map, &key0, &value0);
+  void *prev = NULL;
+
+  assert(hash_map_put(map, &key0, &value0, &prev));
   assert(map->buckets->node->key == &key0);
   assert(map->buckets->node->value == &value0);
   assert(map->buckets->node->next == NULL);
   assert(map->capacity == 12);
   assert(map->buckets_number == 16);
   assert(map->entries_number == 1);
+  assert(prev == NULL);
 
-  hash_map_put(map, &key3, &value3);
+  assert(hash_map_put(map, &key3, &value3, &prev));
   assert((map->buckets + 3)->node->key = &key3);
   assert((map->buckets + 3)->node->value = &value3);
   assert((map->buckets + 3)->node->next == NULL);
   assert(map->capacity == 12);
   assert(map->buckets_number == 16);
   assert(map->entries_number == 2);
+  assert(prev == NULL);
 
-  hash_map_put(map, &key1, &value1);
+  assert(hash_map_put(map, &key1, &value1, &prev));
   struct HashMapNode *node1 = (map->buckets + 1)->node;
   assert(node1->key == &key1);
   assert(node1->value == &value1);
@@ -90,8 +94,9 @@ void test_hash_map_put() {
   assert(map->capacity == 12);
   assert(map->buckets_number == 16);
   assert(map->entries_number == 3);
+  assert(prev == NULL);
 
-  hash_map_put(map, &key101, &value101);
+  assert(hash_map_put(map, &key101, &value101, &prev));
   struct HashMapNode *node101 = (map->buckets + 1)->node;
   assert(node101->key == &key101);
   assert(node101->value == &value101);
@@ -99,6 +104,10 @@ void test_hash_map_put() {
   assert(map->capacity == 12);
   assert(map->buckets_number == 16);
   assert(map->entries_number == 4);
+  assert(prev == NULL);
+
+  assert(hash_map_put(map, &key101, &value1, &prev));
+  assert(prev == &value101);
 
   free_hash_map(map);
 
@@ -115,7 +124,7 @@ void test_hash_map_put() {
     *value = i;
     keys[i] = key;
     values[i] = value;
-    hash_map_put(map, key, value);
+    assert(hash_map_put(map, key, value, &prev));
   }
 
   assert(map->capacity == 12);
@@ -140,7 +149,7 @@ void test_hash_map_put() {
 
   int8_t key116 = 116;
   int8_t value116 = 116;
-  hash_map_put(map, &key116, &value116);
+  assert(hash_map_put(map, &key116, &value116, &prev));
 
   assert(map->capacity == 24);
   assert(map->buckets_number == 32);
@@ -179,6 +188,7 @@ void test_hash_map_contains() {
                                         (bool (*)(void *, void*)) eq_f,
                                         0);
 
+  void *prev = NULL;
   int8_t *keys[256];
   int8_t *values[256];
   for (int8_t i = -128; i < 127; i++) {
@@ -188,7 +198,7 @@ void test_hash_map_contains() {
     *value = i;
     keys[i + 128] = key;
     values[i + 128] = value;
-    hash_map_put(map, key, value);
+    assert(hash_map_put(map, key, value, &prev));
   }
 
   for (int8_t i = -128; i < 126; i++) {
@@ -213,6 +223,7 @@ void test_hash_map_get() {
                                         (bool (*)(void *, void*)) eq_f,
                                         0);
 
+  void *prev = NULL;
   int8_t *keys[256];
   int8_t *values[256];
   for (int8_t i = -128; i < 127; i++) {
@@ -222,7 +233,7 @@ void test_hash_map_get() {
     *value = i;
     keys[i + 128] = key;
     values[i + 128] = value;
-    hash_map_put(map, key, value);
+    assert(hash_map_put(map, key, value, &prev));
   }
 
   for (int8_t i = -128; i < 126; i++) {
@@ -247,6 +258,7 @@ void test_hash_map_remove() {
                                         (bool (*)(void *, void*)) eq_f,
                                         0);
 
+  void *prev = NULL;
   int8_t *keys[256];
   int8_t *values[256];
   for (int8_t i = -128; i < 127; i++) {
@@ -256,7 +268,7 @@ void test_hash_map_remove() {
     *value = i;
     keys[i + 128] = key;
     values[i + 128] = value;
-    hash_map_put(map, key, value);
+    assert(hash_map_put(map, key, value, &prev));
   }
 
   assert(map->entries_number == 255);
@@ -277,7 +289,7 @@ int main(int argc, char const *argv[]) {
   test_create_hash_map();
   printf("test_create_hash_map passed.\n");
   test_hash_map_put();
-  printf("test_hash_map_put passed.\n");
+  printf("test_assert(hash_map_put passed.\n");
   test_hash_map_contains();
   printf("test_hash_map_contains passed.\n");
   test_hash_map_get();
