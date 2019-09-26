@@ -14,8 +14,8 @@ bool eq_f(int8_t *key1, int8_t *key2) {
 }
 
 void test_create_hash_map() {
-  struct HashMap *map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                                        (bool (*)(void *, void*)) eq_f,
+  struct HashMap *map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                                        (bool (*)(const void *, const void*)) eq_f,
                                         0);
   assert(map->capacity == 12);
   assert(map->buckets_number == 16);
@@ -27,8 +27,8 @@ void test_create_hash_map() {
 
   free_hash_map(map);
 
-  map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                        (bool (*)(void *, void*)) eq_f,
+  map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                        (bool (*)(const void *, const void*)) eq_f,
                         1000);
 
   assert(map->capacity == 1536);
@@ -54,8 +54,8 @@ void hash_map_print(struct HashMap *map) {
 }
 
 void test_hash_map_put() {
-  struct HashMap *map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                                        (bool (*)(void *, void*)) eq_f,
+  struct HashMap *map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                                        (bool (*)(const void *, const void*)) eq_f,
                                         0);
   int8_t key0 = 0;
   int8_t key3 = 3;
@@ -66,7 +66,7 @@ void test_hash_map_put() {
   int8_t value1 = 1;
   int8_t value101 = 101;
 
-  void *prev = NULL;
+  const void *prev = NULL;
 
   assert(hash_map_put(map, &key0, &value0, &prev));
   assert(map->buckets->node->key == &key0);
@@ -78,8 +78,8 @@ void test_hash_map_put() {
   assert(prev == NULL);
 
   assert(hash_map_put(map, &key3, &value3, &prev));
-  assert((map->buckets + 3)->node->key = &key3);
-  assert((map->buckets + 3)->node->value = &value3);
+  assert((map->buckets + 3)->node->key == &key3);
+  assert((map->buckets + 3)->node->value == &value3);
   assert((map->buckets + 3)->node->next == NULL);
   assert(map->capacity == 12);
   assert(map->buckets_number == 16);
@@ -111,9 +111,9 @@ void test_hash_map_put() {
 
   free_hash_map(map);
 
-  map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                                        (bool (*)(void *, void*)) eq_f,
-                                        0);
+  map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                        (bool (*)(const void *, const void*)) eq_f,
+                        0);
 
   int8_t *keys[12];
   int8_t *values[12];
@@ -184,11 +184,11 @@ void test_hash_map_put() {
 }
 
 void test_hash_map_contains() {
-  struct HashMap *map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                                        (bool (*)(void *, void*)) eq_f,
+  struct HashMap *map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                                        (bool (*)(const void *, const void*)) eq_f,
                                         0);
 
-  void *prev = NULL;
+  const void *prev = NULL;
   int8_t *keys[256];
   int8_t *values[256];
   for (int8_t i = -128; i < 127; i++) {
@@ -219,11 +219,11 @@ void test_hash_map_contains() {
 }
 
 void test_hash_map_get() {
-  struct HashMap *map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                                        (bool (*)(void *, void*)) eq_f,
+  struct HashMap *map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                                        (bool (*)(const void *, const void*)) eq_f,
                                         0);
 
-  void *prev = NULL;
+  const void *prev = NULL;
   int8_t *keys[256];
   int8_t *values[256];
   for (int8_t i = -128; i < 127; i++) {
@@ -254,11 +254,11 @@ void test_hash_map_get() {
 }
 
 void test_hash_map_remove() {
-  struct HashMap *map = create_hash_map((map_size_t (*)(void *)) hash_f,
-                                        (bool (*)(void *, void*)) eq_f,
+  struct HashMap *map = create_hash_map((map_size_t (*)(const void *)) hash_f,
+                                        (bool (*)(const void *, const void*)) eq_f,
                                         0);
 
-  void *prev = NULL;
+  const void *prev = NULL;
   int8_t *keys[256];
   int8_t *values[256];
   for (int8_t i = -128; i < 127; i++) {

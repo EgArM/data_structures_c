@@ -8,8 +8,8 @@
 #define LOAD_FACTOR 0.75f
 #define MINIMUM_CAPACITY 12
 
-struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
-                                bool (*eq_f) (void *, void *),
+struct HashMap *create_hash_map(map_size_t (*hash_f) (const void *),
+                                bool (*eq_f) (const void *, const void *),
                                 map_size_t initial_capacity) {
   struct HashMap *map = malloc(sizeof(struct HashMap));
   if (map == NULL) {
@@ -43,7 +43,7 @@ struct HashMap *create_hash_map(map_size_t (*hash_f) (void *),
 }
 
 void __hash_map_put_node__(struct HashMap *map, struct HashMapNode *node) {
-  void *key = node->key;
+  const void *key = node->key;
   map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
   struct HashMapBucket *bucket = map->buckets + index;
   struct HashMapNode *next_node = bucket->node;
@@ -83,7 +83,7 @@ bool __hash_map_resize__(struct HashMap *map) {
   return true;
 }
 
-struct HashMapNode *__hash_map_get_node__(struct HashMap *map, void *key) {
+struct HashMapNode *__hash_map_get_node__(const struct HashMap *map, const void *key) {
   map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
   struct HashMapBucket *bucket = map->buckets + index;
   struct HashMapNode *node = bucket->node;
@@ -96,7 +96,7 @@ struct HashMapNode *__hash_map_get_node__(struct HashMap *map, void *key) {
   return NULL;
 }
 
-bool hash_map_put(struct HashMap *map, void *key, void *value, void **prev) {
+bool hash_map_put(struct HashMap *map, const void *key, const void *value, const void **prev) {
   struct HashMapNode *node = __hash_map_get_node__(map, key);
   if (node != NULL) {
     *prev = node->value;
@@ -122,17 +122,17 @@ bool hash_map_put(struct HashMap *map, void *key, void *value, void **prev) {
   }
 }
 
-bool hash_map_contains(struct HashMap *map, void *key) {
+bool hash_map_contains(const struct HashMap *map, const void *key) {
   struct HashMapNode *node = __hash_map_get_node__(map, key);
   return node != NULL;
 }
 
-void *hash_map_get(struct HashMap *map, void *key) {
+const void *hash_map_get(const struct HashMap *map, const void *key) {
   struct HashMapNode *node = __hash_map_get_node__(map, key);
   return node != NULL ? node->value : NULL;
 }
 
-void *hash_map_remove(struct HashMap *map, void *key) {
+const void *hash_map_remove(struct HashMap *map, const void *key) {
   map_size_t index = map->hash_f(key) & (map->buckets_number - 1);
   struct HashMapBucket *bucket = map->buckets + index;
   struct HashMapNode *prev = NULL;
@@ -145,7 +145,7 @@ void *hash_map_remove(struct HashMap *map, void *key) {
         prev->next = node->next;
       }
       map->entries_number -= 1;
-      void *result = node->value;
+      const void *result = node->value;
       free(node);
       return result;
     }
